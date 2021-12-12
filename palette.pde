@@ -48,7 +48,7 @@ class Palette {
   color getBackground() {
     return this.colorList.get(0).get();
   }
-  
+
   color getRandom() {
     int random;
     while (true) {

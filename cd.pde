@@ -1,108 +1,96 @@
-class CD {
-  float theta = 0.0;
-  int x, y, r;
-  float scale1;
-  color c;
+class CD extends Component {
+  int x, y;
+  float r, constR, weight, constWeight;
+  ArrayList<Ball> ballCollection = new ArrayList<Ball>();
 
-  int starRingDistanceCounter = 0;
-  int starRingDistanceMin = 25;
-  ArrayList<StarRing> StarRingCollection;
-
-  CD(int x, int y, int r) {
+  CD(int x, int y, float constR) {
     this.x = x;
     this.y = y;
-    this.r = r;
-    this.scale1 = 0.618;
-    this.c = palette.getRandom();
-    this.StarRingCollection = new ArrayList<StarRing>();
+
+    this.constR = constR;
+    this.r = this.constR;
+
+    this.constWeight = 28.0;
+    this.weight = this.constWeight;
   }
 
-  void update(boolean isBeat) {
-    this.theta += 0.02;
-    this.createStarRing(isBeat);
+  void update() {
+    if (isBeat) {
+      this.weight = int(this.constWeight*1.3);
+      this.r = int(1.05*this.constR);
+    } else {
+      if (this.weight > this.constWeight) {
+        this.weight -= 0.008*this.weight;
+      }
+      if (this.r > this.constR) {
+        this.r -= 0.001*this.r;
+      }
+    }
   }
 
   void display() {
+    this.update();
     pushMatrix();
     translate(this.x, this.y);
-    rotate(this.theta);
 
-    noStroke();
-    fill(0);
+    noFill();
+    stroke(21, 41, 10);
+    strokeWeight(this.weight);
     ellipse(0, 0, 2*this.r, 2*this.r);
 
-    noStroke();
-    fill(c);
-    ellipse(0, 0, 2*this.r*this.scale1, 2*this.r*this.scale1);
-
-    noStroke();
-    fill(255);
-    ellipse(0, this.r*this.scale1, 2*this.r*0.2, 2*this.r*0.2);
-
-    this.drawStarRing();
+    this.ball();
 
     popMatrix();
   }
 
-  void createStarRing(boolean isBeat) {
-    if (this.starRingDistanceCounter > this.starRingDistanceMin) {
-      if (isBeat) {
-        StarRingCollection.add(new StarRing(this.r, color(0), 255, random(15, 20), random(0, 2*PI)));
-        this.starRingDistanceCounter = 0;
-      }
+  void ball() {
+    int dice = (int)random(0, 6);
+    if (dice == 1) {
+      float ballTheta = random(0, 2*PI);
+      float ballRadius = 30;
+      ballCollection.add(new Ball(ballTheta, ballRadius, r));
     }
-    this.starRingDistanceCounter++;
-  }
-
-  void drawStarRing() {
-    for (int i = 0; i < StarRingCollection.size(); i++) {
-      StarRing nowRing = (StarRing)StarRingCollection.get(i);
-      nowRing.displayRing();
-      nowRing.displayStar();
-      if (nowRing.rStarRing > nowRing.rStarMax) {
-        StarRingCollection.remove(i);
+    for (Ball myball : ballCollection) {
+      myball.display();
+    }
+    for (int i = 0; i < ballCollection.size(); i++) {
+      Ball removeBall = (Ball)ballCollection.get(i);
+      if (removeBall.isDead()) {
+        ballCollection.remove(i);
       }
     }
   }
 }
 
-class StarRing {
-  float rStarRing;
-  color cRing;
-  float alpha;
-  float rStar;
-  float starTheta;
+class Ball {
+  float ballTheta;
+  float ballRadius;
+  float r;
+  PVector ballLocation;
+  PVector speed;
+  float lifespan;
 
-  float rStarMax = 300;
-
-  StarRing(float _rStarRing, color _cRing, float _alpha, float _rStar, float _starTheta) {
-    rStarRing = _rStarRing;
-    cRing = _cRing;
-    alpha = _alpha;
-    rStar = _rStar;
-    starTheta = _starTheta;
+  Ball(float _ballTheta, float _ballRadius, float _r) {
+    ballTheta = _ballTheta;
+    ballRadius = _ballRadius;
+    r = _r;
+    ballLocation = new PVector(r * cos(ballTheta), r * sin(ballTheta));
+    speed = new PVector(cos(ballTheta)*2, sin(ballTheta)*2);
+    lifespan = 70;
   }
-
-  void displayRing() {
-    if (rStarRing < rStarMax) {
-      stroke(cRing);
-      noFill();
-      strokeWeight(2);
-      ellipse(0, 0, rStarRing*2, rStarRing*2);
-      rStarRing++;
-      alpha *= 0.99;
-      cRing = color(hue(cRing), saturation(cRing), brightness(cRing), alpha);
-    }
+  void display() {
+    noStroke();
+    fill(21, 41, 10, lifespan*4+10);
+    ellipse(ballLocation.x, ballLocation.y, ballRadius, ballRadius);
+    ballLocation.add(speed);
+    ballRadius *= 0.99;
+    lifespan -= 1.0;
   }
-
-  void displayStar() {
-    if (rStarRing < rStarMax) {
-      noStroke();
-      fill(cRing);
-      ellipse(rStarRing * cos(starTheta), rStarRing * sin(starTheta), rStar, rStar);
-      starTheta -= 0.03;
-      rStar *= 0.999;
-      noFill();
+  Boolean isDead() {
+    if (lifespan < 0.0) {
+      return true;
+    } else {
+      return false;
     }
   }
 }

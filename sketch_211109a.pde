@@ -6,6 +6,9 @@ BeatDetector detector;
 Palette palette;
 Screen screen;
 
+FFT fft;
+int bands = 512;
+float[] spectrum = new float[bands];
 
 void setup() {
   palette = new Palette(1);
@@ -19,15 +22,16 @@ void setup() {
   detector = new BeatDetector(this);
   detector.input(in);
 
-  size(680, 700);
+  fft = new FFT(this, bands);
+  fft.input(in);
+
+  size(680, 680);
   background(255);
   frameRate(60);
   smooth();
 }
 
 void draw() {
-  //background(palette.getBackground());
-
   screen.update(detector.isBeat());
   screen.dispaly();
 }
