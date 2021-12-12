@@ -1,65 +1,57 @@
 class Line {
   int kind;
-  int x, y, r;
+  int x, y, d;
 
-  Line(int kind, int x, int y, int r) {
+  int count;
+  int w;
+  float theta;
+  int[] weightList;
+
+
+  Line(int kind, int x, int y, int d) {
     this.kind = kind;
     this.x = x;
     this.y = y;
-    this.r = r;
+    this.d = d;
+
+    //this.count = int(random(1, 4));
+    this.count = 3;
+    this.w = 10;
+    this.theta = random(TWO_PI);
+    this.weightList = new int[this.count];
+    for (int i=0; i<this.count; i++) {
+      weightList[i] = int(random(1, 7));
+    }
   }
 
   void update(boolean isBeat) {
+    this.theta += 0.003;
   }
 
   void display() {
     pushMatrix();
     translate(x, y);
+    rotate(this.theta);
 
     switch (this.kind) {
     case 1:
-      scale(float(this.r)/440.0);
-      strokeWeight(5);
+      // san xian
       strokeCap(SQUARE);
       stroke(0);
-      line(400, 100, 100, 400);
-      strokeWeight(3);
-      line(420, 100, 120, 400);
-      strokeWeight(1);
-      line(440, 100, 140, 400);
+      for (int i=0; i<this.count; i++) {
+        strokeWeight(this.weightList[i]);
+        line(0, 0+i*this.w, this.d, 0+i*this.w);
+      }
       break;
     case 2:
-      scale(float(this.r)/600.0);
-      strokeWeight(10);
+      // jiao
+      strokeWeight(this.weightList[0]);
+      stroke(0);
       strokeCap(SQUARE);
-      fill(0);
-      arc(80, 330, 450, 450, 0, HALF_PI);
-      fill(255);
-      noStroke();
-      ellipse(85, 300, 450, 450);
-      strokeWeight(3);
-      strokeCap(ROUND);
-      stroke(0);
-      line(100, 100, 456, 265);
-      strokeWeight(2);
-      line(130, 265, 311, 265);
-      strokeWeight(1);
-      line(150, 300, 331, 300);
-      strokeWeight(1);
-      line(200, 80, 200, 606);
-      break;
-    case 3:
-      scale(float(this.r)/750.0);
-      noFill();
-      stroke(0);
-      strokeWeight(0.5);
-      line(500, 100, 350, 600);
-      line(500, 100, 650, 600);
-      strokeWeight(1);
-      line(250, 500, 750, 500);
+      line(0, 0, d, 0-2*d);
+      line(0, 0, 0+1.5*d, 0-1.2*d);
       break;
     }
-
     popMatrix();
   }
 }

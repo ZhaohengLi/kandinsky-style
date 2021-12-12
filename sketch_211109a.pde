@@ -1,29 +1,33 @@
 import processing.sound.*;
+
 Amplitude amp;
 AudioIn in;
 BeatDetector detector;
+Palette palette;
 Screen screen;
-PImage img;
+
 
 void setup() {
-  size(1700, 1000);
-  img = loadImage("background.jpg");
+  palette = new Palette(1);
   screen = new Screen();
+
   amp = new Amplitude(this);
   in = new AudioIn(this, 0);
   in.start();
   amp.input(in);
+
   detector = new BeatDetector(this);
   detector.input(in);
+
+  size(680, 700);
+  background(255);
+  frameRate(60);
+  smooth();
 }
 
 void draw() {
-  drawBackground();
-  println(amp.analyze());
-  screen.update(detector.isBeat());
-  screen.display();
-}
+  //background(palette.getBackground());
 
-void drawBackground() {
-  background(255);
+  screen.update(detector.isBeat());
+  screen.dispaly();
 }
