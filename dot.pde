@@ -1,4 +1,4 @@
-class Dot { //<>//
+class Dot {
   int kind;
   int x, y, r, constR;
   float scale1, scale2;

@@ -16,14 +16,14 @@ class CD extends Component {
 
   void update() {
     if (isBeat) {
-      this.weight = int(this.constWeight*1.3);
-      this.r = int(1.05*this.constR);
+      this.weight = int(this.constWeight*1.6);
+      this.r = int(1.1*this.constR);
     } else {
       if (this.weight > this.constWeight) {
-        this.weight -= 0.008*this.weight;
+        this.weight -= 0.005*this.weight;
       }
       if (this.r > this.constR) {
-        this.r -= 0.001*this.r;
+        this.r -= 0.002*this.r;
       }
     }
   }
@@ -34,7 +34,7 @@ class CD extends Component {
     translate(this.x, this.y);
 
     noFill();
-    stroke(21, 41, 10);
+    stroke(0, 220);
     strokeWeight(this.weight);
     ellipse(0, 0, 2*this.r, 2*this.r);
 
@@ -45,7 +45,7 @@ class CD extends Component {
 
   void ball() {
     int dice = (int)random(0, 6);
-    if (dice == 1) {
+    if (dice == 1 && amp.analyze() > 0) {
       float ballTheta = random(0, 2*PI);
       float ballRadius = 30;
       ballCollection.add(new Ball(ballTheta, ballRadius, r));
@@ -76,11 +76,11 @@ class Ball {
     r = _r;
     ballLocation = new PVector(r * cos(ballTheta), r * sin(ballTheta));
     speed = new PVector(cos(ballTheta)*2, sin(ballTheta)*2);
-    lifespan = 70;
+    lifespan = 50;
   }
   void display() {
     noStroke();
-    fill(21, 41, 10, lifespan*4+10);
+    fill(0, lifespan*4);
     ellipse(ballLocation.x, ballLocation.y, ballRadius, ballRadius);
     ballLocation.add(speed);
     ballRadius *= 0.99;
